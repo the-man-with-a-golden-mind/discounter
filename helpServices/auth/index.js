@@ -2,6 +2,13 @@ const express =
       require("express");
 const path = require("path");
 const passport = require("passport");
+const MC = require("memcached");
+const fs = require("fs");
+const hat = require("hat");
+
+const mc_settings = JSON.parse(fs.readFileSync("../../settings/cache.json"));
+
+const mc = new MC(mc_settings.host + ":" + mc_settings.port);
 
 const app = express();
 
@@ -29,7 +36,12 @@ passport.use(new GoogleStrategy({
     callbackURL: "http://127.0.0.1:8001/auth/google/callback"
 },
                                 function(accessToken, refreshToken, profile, done) {
-                                    return done(null, {name: profile.displayName, innerOauthID: profile.id});
+                                    const hash = profile.id + "-" + profile.displayName;
+                                    const profileBuffer = Buffer.from(hash);
+                                    const profile64 = profileBuffer.toString("base64");
+                                    const token = hat();
+                                    mc.set(profile64, token, 43200, function (err) { console.log(err);});
+                                    return done(null, {name: profile.displayName, outerID: profile.id, token: token, hash: profile64});
                                 }
                                ));
 
@@ -43,7 +55,6 @@ app.get('/auth/google',
 app.get('/auth/google/callback', 
         passport.authenticate('google', { failureRedirect: '/login' }),
         function(req, res) {
-            console.log(req.user);
             // Successful authentication, redirect home.
             // I don't need to put here res. I can return right json
 
