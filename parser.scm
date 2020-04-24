@@ -1,0 +1,16 @@
+(module parser (parse-request)
+(import scheme)
+(import medea)
+(import (chicken base))
+(import (chicken io))
+(import (prefix (parsers bookDepository) "bd:"))
+(define (parse-request url owner)
+  (let ((safe-owner (if (symbol? owner) owner (string->symbol owner))))
+    (case safe-owner
+            ('BookDepository (bd:parse url))
+            (else (json->string `((status . "error")
+                                  (message . ,(string-append "Cannot parse owner with name: " (symbol->string safe-owner))))))))
+  )
+;(print (parse-request "aHR0cHM6Ly93d3cuYm9va2RlcG9zaXRvcnkuY29tL0JlZWtlZXBlci1BbGVwcG8tQ2hyaXN0eS1MZWZ0ZXJpLzk3ODE4Mzg3NzAwMTM/cmVmPXBkX2d3XzFfcGRfZ2F0ZXdheV8xXzE="  "BookDepository"))
+
+)
