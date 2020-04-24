@@ -1,4 +1,4 @@
-puts "I am generating imports for $argv0"
+puts "I am generating imports for $argv"
 puts "..."
 if {$argc == 1} {
     set arg1 $argv
