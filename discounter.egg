@@ -1,15 +1,20 @@
-((synopsis "Page parser for discouter project")
- (author "VMV")
- (license "Unlicense")
- (category web)
- (dependencies args srfi-1 srfi-12 srfi-13
-               srfi-18 base64 sxpath
-               sxpath-lolevel html-parser
-               clojurian http-client spiffy
-               spiffy-uri-match intarweb
-               uri-common medea json)
- (component-options (csc-options "-m" "path"))
- (components
-             (extensions parsers.bookDepository (source "parsers/bookDepository.scm"))
-             (program parser
-                      (component-dependencies parsers.bookDepository))))
+(
+  (author "VMV")
+  (license "Unlicense")
+  (category web)
+
+(dependencies args srfi-1 
+              srfi-18 base64 sxpath
+              openssl html-parser posix-utils
+              clojurian http-client spiffy
+              spiffy-uri-match intarweb
+              uri-common medea json)
+
+(component-options (linkage static))
+  (components
+
+            (extension parsers.bookDepository (source "parsers/bookDepository.scm"))
+              (program parser
+                       (link-options "-L" "-lssl"  "-L" "-lcrypto")
+                       (component-dependencies parsers.bookDepository))))
+)
