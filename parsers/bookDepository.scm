@@ -37,11 +37,15 @@
 (define parse
   (lambda (url)
     (handle-exceptions exn
-      (json->string `((status . "error")
-                      (message . ,(string-append "can not parse url: " url))))
+      (begin
+          (print exn)
+          (json->string `((status . "error")
+                       (message . ,(string-append "can not parse url: " url)))))
       (let* ((decoded-url (decode-url url))
              (html-content (with-input-from-request decoded-url #f html->sxml))
+             ;(xx (print html-content))
              (sale-price ((sxpath "string(//span[@class='sale-price']/text())" ) html-content))
+             (xx (print sale-price))
              (book-image ((sxpath "string(//img[@class='book-img']//@src)") html-content))
              (parsed-sale-price (parse-price sale-price))
              (main-price ((sxpath "string(//span[@class='list-price']/text())") html-content))
@@ -55,6 +59,6 @@
                                 (discountPrice . ,parsed-sale-price)
                                 (price . ,(if (equal? parsed-main-price "") parsed-sale-price parsed-main-price))))))))))
 
-;(print (parse "aHR0cHM6Ly93d3cuYm9va2RlcG9zaXRvcnkuY29tL0JlZWtlZXBlci1BbGVwcG8tQ2hyaXN0eS1MZWZ0ZXJpLzk3ODE4Mzg3NzAwMTM/cmVmPXBkX2d3XzFfcGRfZ2F0ZXdheV8xXzE="))
+(print (parse "aHR0cHM6Ly93d3cuYm9va2RlcG9zaXRvcnkuY29tL0JlZWtlZXBlci1BbGVwcG8tQ2hyaXN0eS1MZWZ0ZXJpLzk3ODE4Mzg3NzAwMTM/cmVmPXBkX2d3XzFfcGRfZ2F0ZXdheV8xXzE="))
 
 )
