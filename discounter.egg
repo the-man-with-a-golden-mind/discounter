@@ -9,7 +9,7 @@
                spiffy-uri-match intarweb
                uri-common medea json)
  (component-options (csc-options "-m" "path"))
- (components (program webserver)
-             (extensions parsers.book-depository (source "parsers/book-depository.scm"))
+ (components
+             (extensions parsers.bookDepository (source "parsers/bookDepository.scm"))
              (program parser
-                      (component-dependencies parsers.book-depository))))
+                      (component-dependencies parsers.bookDepository))))
