@@ -1,5 +1,6 @@
 (module discounter (parse-request)
 (import intarweb)
+(import openssl)
 (import http-client)
 (import html-parser)
 (import spiffy)
